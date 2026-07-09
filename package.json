@@ -1,0 +1,22 @@
+{
+  "name": "weather-time-mcp-server",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "build/index.js",
+  "bin": {
+    "weather-time-mcp-server": "./build/index.js"
+  },
+  "scripts": {
+    "build": "tsc && chmod +x build/index.js",
+    "start": "node build/index.js",
+    "inspector": "npx @modelcontextprotocol/inspector node build/index.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.43",
+    "typescript": "^5.5.0"
+  }
+}
