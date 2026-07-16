@@ -3,6 +3,7 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
+import chalk from "chalk";
 
 const server = new McpServer({
   name: "weather-time-server",
@@ -17,9 +18,18 @@ server.registerTool(
     inputSchema: {},
   },
   async () => {
-    const now = new Date().toISOString();
+    const now = new Date();
+    const formatted = now.toLocaleString("en-US", {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    });
     return {
-      content: [{ type: "text", text: `The current system time is: ${now}` }],
+      content: [{ type: "text", text: `🕒 **Current Time**\n${formatted}` }],
     };
   }
 );
@@ -47,9 +57,21 @@ server.registerTool(
       note: "This is mock data for demonstration purposes.",
     };
 
+    const emojiMap: Record<string, string> = {
+      Sunny: "☀️",
+      Cloudy: "☁️",
+      Rainy: "🌧️",
+      Windy: "💨",
+      Snowy: "❄️",
+    };
+    const emoji = emojiMap[randomCondition] ?? "🌍";
+
     return {
       content: [
-        { type: "text", text: `Weather forecast for ${city}: ${JSON.stringify(mockForecast, null, 2)}` },
+        {
+          type: "text",
+          text: `${emoji} **Weather in ${city}**\n🌡️ Temperature: ${randomTemp}°C\n${emoji} Condition: ${randomCondition}\n💧 Humidity: ${mockForecast.humidity_percent}%\n\n_${mockForecast.note}_`,
+        },
       ],
     };
   }
@@ -58,7 +80,7 @@ server.registerTool(
 async function main() {
   const transport = new StdioServerTransport();
   await server.connect(transport);
-  console.error("Weather and Time MCP Server running on stdio");
+  console.error(chalk.green("✔ Weather and Time MCP Server running on stdio"));
 }
 
 main().catch((error) => {
